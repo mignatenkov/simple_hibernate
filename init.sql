@@ -1,0 +1,24 @@
+CREATE TABLE simple_role
+(
+    id BIGINT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    name VARCHAR(30) NOT NULL
+);
+CREATE TABLE simple_user
+(
+    id BIGINT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    name VARCHAR(30) NOT NULL,
+    user_info_id BIGINT
+);
+CREATE TABLE simple_user_role
+(
+    id BIGINT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL
+);
+CREATE TABLE user_info
+(
+    id BIGINT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    first_name VARCHAR(30),
+    last_name VARCHAR(30),
+    address VARCHAR(255)
+);
