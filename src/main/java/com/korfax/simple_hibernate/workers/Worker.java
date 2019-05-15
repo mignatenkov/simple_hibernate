@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class Worker {
 
@@ -24,6 +27,8 @@ public class Worker {
 
     @Transactional
     public void doWork() {
+//      Basic part:
+
         Role newRole = new Role("ROLE_USER");
         List<Role> roles = new ArrayList<>();
         roles.add(newRole);
@@ -45,8 +50,24 @@ public class Worker {
         userRepository.save(newUser);
 
         Role reseivedRole = roleRepository.findByName("ROLE_USER").get(0);
-        System.out.println(reseivedRole.toString());
-        System.out.println(Arrays.deepToString(reseivedRole.getUsers().toArray()));
+        log.info(reseivedRole.toString());
+        log.info("1st call: " + System.currentTimeMillis() + "ms " + Arrays.deepToString(reseivedRole.getUsers().toArray()));
+
+//      Cache usage part:
+
+        log.info(">>>>>> Current time: " + System.currentTimeMillis());
+
+        Long startTime = System.currentTimeMillis();
+        roles = roleRepository.findAll();
+        log.info(">>>>>> 1st call: " + System.currentTimeMillis() + " " + (System.currentTimeMillis() - startTime) + "ms " + Arrays.deepToString(roles.toArray()));
+
+        startTime = System.currentTimeMillis();
+        roles = roleRepository.findAll();
+        log.info(">>>>>> 2nd call: " + System.currentTimeMillis() + " " + (System.currentTimeMillis() - startTime) + "ms " + Arrays.deepToString(roles.toArray()));
+
+        startTime = System.currentTimeMillis();
+        roles = roleRepository.findAll();
+        log.info(">>>>>> 3nd call: " + System.currentTimeMillis() + " " + (System.currentTimeMillis() - startTime) + "ms " + Arrays.deepToString(roles.toArray()));
     }
 
 }

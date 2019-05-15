@@ -16,10 +16,16 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
+import org.springframework.core.io.ClassPathResource;
+
 @Configuration
 @ComponentScan("com.korfax")
 @EnableTransactionManagement
 @EnableJpaRepositories("com.korfax.simple_hibernate.repositories")
+@EnableCaching
 public class DatabaseConfiguration {
 
     private static final String PROPERTY_NAME_DATABASE_DRIVER = "db.driver";
@@ -73,4 +79,18 @@ public class DatabaseConfiguration {
         return transactionManager;
     }
 
+    @Bean
+    public EhCacheManagerFactoryBean ehCacheManagerFactory() {
+        EhCacheManagerFactoryBean cacheManagerFactoryBean = new EhCacheManagerFactoryBean();
+        cacheManagerFactoryBean.setConfigLocation(new ClassPathResource("ehcache.xml"));
+        cacheManagerFactoryBean.setShared(true);
+        return cacheManagerFactoryBean;
+    }
+    @Bean
+    public EhCacheCacheManager ehCacheCacheManager() {
+        EhCacheCacheManager cacheManager = new EhCacheCacheManager();
+        cacheManager.setCacheManager(ehCacheManagerFactory().getObject());
+        cacheManager.setTransactionAware(true);
+        return cacheManager;
+    }
 }
